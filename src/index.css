@@ -6,9 +6,22 @@
 
 body {
   font-family: 'Montserrat', sans-serif;
+  background-color: #DFE6FF;
+}
+
+.search-button {
+  background-color: #001972;
 }
 
 .search-button:hover {
-  background-color: #a4e321;
+  background-color: #829dff;
   cursor: pointer;
+}
+
+.material-symbols-sharp {
+  font-variation-settings:
+  'FILL' 1,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
 }
