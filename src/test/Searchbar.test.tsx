@@ -28,8 +28,9 @@ test('should display word after submission via click', async () => {
 
   const list = await screen.findByTestId('list-word-phonetics');
   expect(within(list).getByText('cat')).toBeInTheDocument();
-  expect(within(list).getByText('Phonetic: /kat/')).toBeInTheDocument();
-  expect(within(list).getByText('Part of Speech: noun'));
+  expect(within(list).getByText('/kat/')).toBeInTheDocument();
+  expect(within(list).getByText('noun'));
+  //utöka med fler grejer här
 });
 
 test('should see if an error displays if search with empty field', async () => {
@@ -70,6 +71,8 @@ test('should see if there is an audio element', async () => {
   await user.click(searchBtn);
 
   const list = await screen.findByTestId('list-word-phonetics');
+  const audioBtn = screen.getByText('volume_up');
+  await user.click(audioBtn);
   const audioElements = within(list).getAllByTestId('audio');
   expect(audioElements[0]).toHaveAttribute(
     'src',
