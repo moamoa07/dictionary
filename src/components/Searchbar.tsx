@@ -9,6 +9,11 @@ const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [words, setWords] = useState(initialWords);
   const [error, setError] = useState<string>('');
+  const [isAudioListVisible, setIsAudioListVisible] = useState<boolean>(false);
+
+  const toggleAudioListVisibility = () => {
+    setIsAudioListVisible((prevVisibility) => !prevVisibility);
+  };
 
   const handleSearch = async () => {
     if (!searchTerm) {
@@ -44,7 +49,7 @@ const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
         alignItems: 'center',
         flexDirection: 'column',
         justifyContent: 'center',
-        width: '100%',
+        marginTop: '1rem',
       }}
     >
       <div>
@@ -55,10 +60,9 @@ const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{
             border: 'none',
-            background: '#eed6ff',
+            background: '#fff',
             padding: '0.8rem 0.5rem',
-            borderTopLeftRadius: '20px',
-            borderBottomLeftRadius: '20px',
+            fontFamily: 'Montserrat',
           }}
         />
         <button
@@ -66,9 +70,9 @@ const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
           className="search-button"
           style={{
             border: 'none',
-            borderTopRightRadius: '20px',
-            borderBottomRightRadius: '20px',
             padding: '0.8rem 0.5rem',
+            color: 'white',
+            fontFamily: 'Montserrat',
           }}
         >
           Search
@@ -81,13 +85,17 @@ const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
         </p>
       )}
 
-      {/* Display the first dictionary entry */}
       {words.length > 0 && (
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
+            backgroundColor: '#fff',
+            padding: '1rem',
+            margin: '2rem',
+            maxWidth: '800px',
+            minWidth: '600px',
           }}
         >
           <ul data-testid="list-word-phonetics">
@@ -95,89 +103,158 @@ const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
               <h3 style={{ textTransform: 'uppercase', fontSize: '26px' }}>
                 {words[0].word}
               </h3>
-              <p>Phonetic: {words[0].phonetic}</p>
+              <p>{words[0].phonetic}</p>
 
-              {/* Display phonetics */}
-              <ul>
-                {words[0].phonetics.map(
-                  (
-                    phonetic: {
-                      text:
-                        | string
-                        | number
-                        | boolean
-                        | React.ReactElement<
-                            any,
-                            string | React.JSXElementConstructor<any>
+              {words[0].meanings.map(
+                (
+                  meaning: {
+                    partOfSpeech: string;
+                    definitions: {
+                      definition: string;
+                      synonyms?: string[];
+                      antonyms?: string[];
+                      example?: string;
+                    }[];
+                    synonyms: string[];
+                    antonyms?: string[];
+                  },
+                  meaningIndex: number
+                ) => (
+                  <div key={meaningIndex} style={{ marginTop: '1rem' }}>
+                    <h4>{meaning.partOfSpeech}</h4>
+                    <ol>
+                      {meaning.definitions.slice(0, 5).map(
+                        (
+                          definition: {
+                            definition: string;
+                            synonyms?: string[];
+                            antonyms?: string[];
+                            example?: string;
+                          },
+                          definitionIndex: number
+                        ) => (
+                          <li
+                            key={definitionIndex}
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              marginTop: '0.2rem',
+                            }}
                           >
-                        | Iterable<React.ReactNode>
-                        | React.ReactPortal
-                        | null
-                        | undefined;
-                      audio: string | undefined;
-                    },
-                    phoneticIndex: React.Key | null | undefined
-                  ) => (
-                    <li key={phoneticIndex} style={{ listStyle: 'none' }}>
-                      <p>Text: {phonetic.text}</p>
-                      {phonetic.audio && (
-                        <audio controls>
-                          <source
-                            src={phonetic.audio}
-                            type="audio/mpeg"
-                            data-testid="audio"
-                          />
-                          Your browser does not support the audio element.
-                        </audio>
-                      )}
-                    </li>
-                  )
-                )}
-              </ul>
-
-              {/* Display meanings */}
-              <h4>Meanings</h4>
-              <ul>
-                {words[0].meanings.map(
-                  (
-                    meaning: {
-                      partOfSpeech:
-                        | string
-                        | number
-                        | boolean
-                        | React.ReactElement<
-                            any,
-                            string | React.JSXElementConstructor<any>
-                          >
-                        | Iterable<React.ReactNode>
-                        | React.ReactPortal
-                        | null
-                        | undefined;
-                      definitions: {
-                        definition:
-                          | string
-                          | number
-                          | boolean
-                          | React.ReactElement<
-                              any,
-                              string | React.JSXElementConstructor<any>
+                            <p
+                              style={{
+                                fontWeight: '500',
+                              }}
                             >
-                          | Iterable<React.ReactNode>
-                          | React.ReactPortal
-                          | null
-                          | undefined;
-                      }[];
-                    },
-                    meaningIndex: React.Key | null | undefined
-                  ) => (
-                    <li key={meaningIndex} style={{ listStyle: 'none' }}>
-                      <p>Part of Speech: {meaning.partOfSpeech}</p>
-                      <p>Definition: {meaning.definitions[0].definition}</p>
-                      {/* Add more details as needed */}
-                    </li>
-                  )
-                )}
-              </ul>
+                              {definition.definition}
+                            </p>
+
+                            {definition.example && (
+                              <>
+                                <p style={{ fontSize: '14px' }}>
+                                  Example: {definition.example}
+                                </p>
+                              </>
+                            )}
+                          </li>
+                        )
+                      )}
+                    </ol>
+                    {meaning.synonyms && meaning.synonyms.length > 0 && (
+                      <div
+                        style={{
+                          marginTop: '0.5rem',
+                          display: 'flex',
+                          gap: '0.3rem',
+                        }}
+                      >
+                        <p>Synonyms:</p>
+                        <ul style={{ display: 'flex', gap: '0.3rem' }}>
+                          {meaning.synonyms
+                            .slice(0, 5)
+                            .map((synonym, index) => (
+                              <li
+                                key={index}
+                                style={{
+                                  listStyle: 'none',
+                                }}
+                              >
+                                {synonym},
+                              </li>
+                            ))}
+                        </ul>
+                      </div>
+                    )}
+                    {meaning.antonyms && meaning.antonyms.length > 0 && (
+                      <div
+                        style={{
+                          marginTop: '0.5rem',
+                          display: 'flex',
+                          gap: '0.3rem',
+                        }}
+                      >
+                        <p>Antonyms:</p>
+                        <ul style={{ display: 'flex', gap: '0.3rem' }}>
+                          {meaning.antonyms
+                            .slice(0, 5)
+                            .map((antonym, index) => (
+                              <li key={index} style={{ listStyle: 'none' }}>
+                                {antonym},
+                              </li>
+                            ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )
+              )}
+
+              <button
+                style={{
+                  marginTop: '0.8rem',
+                  fontWeight: '500',
+                  border: 'none',
+                  backgroundColor: '#fff',
+                  cursor: 'pointer',
+                }}
+                onClick={toggleAudioListVisibility}
+              >
+                <span
+                  style={{ fontSize: '30px' }}
+                  className="material-symbols-sharp"
+                >
+                  volume_up
+                </span>
+              </button>
+              {isAudioListVisible && (
+                <ul>
+                  {words[0].phonetics.map(
+                    (
+                      phonetic: {
+                        text: string;
+                        audio: string | undefined;
+                      },
+                      phoneticIndex: number
+                    ) => (
+                      <li key={phoneticIndex} style={{ listStyle: 'none' }}>
+                        {phonetic.audio && (
+                          <div>
+                            <audio controls>
+                              <source
+                                src={phonetic.audio}
+                                type="audio/mpeg"
+                                data-testid="audio"
+                              />
+                              Your browser does not support the audio element.
+                            </audio>
+                            <p>{phonetic.text}</p>
+                          </div>
+                        )}
+                      </li>
+                    )
+                  )}
+                </ul>
+              )}
             </li>
           </ul>
         </div>
