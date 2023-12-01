@@ -5,6 +5,7 @@ interface SearchbarProps {
   words: any[];
 }
 
+// Searchbar has the search form and displays the word that was searched for
 const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [words, setWords] = useState(initialWords);
@@ -15,6 +16,7 @@ const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
     setIsAudioListVisible((prevVisibility) => !prevVisibility);
   };
 
+  // function that makes an api call and sets error messages on search
   const handleSearch = async (e: any) => {
     e.preventDefault();
     if (!searchTerm) {
@@ -53,6 +55,7 @@ const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
         marginTop: '1rem',
       }}
     >
+      {/* form for the search */}
       <form onSubmit={handleSearch}>
         <input
           type="text"
@@ -100,13 +103,14 @@ const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
             minWidth: '600px',
           }}
         >
-          <ul data-testid="list-word-phonetics">
-            <li style={{ listStyle: 'none' }}>
+          <div data-testid="list-word-phonetics">
+            <div>
               <h3 style={{ textTransform: 'uppercase', fontSize: '26px' }}>
                 {words[0].word}
               </h3>
               <p>{words[0].phonetic}</p>
 
+              {/* Mapping over the meanings to display definitions, examples */}
               {words[0].meanings.map(
                 (
                   meaning: {
@@ -124,7 +128,7 @@ const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
                 ) => (
                   <div key={meaningIndex} style={{ marginTop: '1rem' }}>
                     <h4>{meaning.partOfSpeech}</h4>
-                    <ol>
+                    <ul>
                       {meaning.definitions.slice(0, 5).map(
                         (
                           definition: {
@@ -138,22 +142,20 @@ const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
                           <li
                             key={definitionIndex}
                             style={{
-                              display: 'flex',
-                              flexDirection: 'column',
                               marginBottom: '0.5rem',
+                              listStyle: 'none',
+                              fontWeight: '500',
                             }}
                           >
-                            <p
-                              style={{
-                                fontWeight: '500',
-                              }}
-                            >
-                              {definition.definition}
-                            </p>
-
+                            {definition.definition}
                             {definition.example && (
                               <>
-                                <p style={{ fontSize: '14px' }}>
+                                <p
+                                  style={{
+                                    fontSize: '14px',
+                                    fontWeight: '400',
+                                  }}
+                                >
                                   Example: {definition.example}
                                 </p>
                               </>
@@ -161,7 +163,7 @@ const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
                           </li>
                         )
                       )}
-                    </ol>
+                    </ul>
                     {meaning.synonyms && meaning.synonyms.length > 0 && (
                       <div
                         style={{
@@ -214,6 +216,7 @@ const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
                 )
               )}
 
+              {/* button that toggles the audios to show on click */}
               <button
                 style={{
                   marginTop: '0.8rem',
@@ -260,8 +263,8 @@ const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
                   )}
                 </ul>
               )}
-            </li>
-          </ul>
+            </div>
+          </div>
         </div>
       )}
     </div>

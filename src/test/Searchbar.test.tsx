@@ -17,7 +17,7 @@ test('should accept a user typing', async () => {
   expect(input).toHaveValue('hej');
 });
 
-test('should display word after submission via click', async () => {
+test('should display searched word after submission via click', async () => {
   render(<App />);
   const user = userEvent.setup();
 
@@ -27,13 +27,56 @@ test('should display word after submission via click', async () => {
   await user.click(searchBtn);
 
   const list = await screen.findByTestId('list-word-phonetics');
+  // check if searched word is there
   expect(within(list).getByText('cat')).toBeInTheDocument();
+  // check if phonetic is there
   expect(within(list).getByText('/kat/')).toBeInTheDocument();
-  expect(within(list).getByText('noun'));
-  //utöka med fler grejer här
+  // check if part of speech is there (noun)
+  expect(within(list).getByText('noun')).toBeInTheDocument();
+  // check if defintion is there
+  expect(
+    within(list).getByText('An animal of the family Felidae:')
+  ).toBeInTheDocument();
+  // check if synonym is there
+  expect(within(list).getByText('Synonyms:')).toBeInTheDocument();
+  // check if part of speech is there (verb)
+  expect(within(list).getByText('verb')).toBeInTheDocument();
+  // check if defintion is there
+  expect(
+    within(list).getByText('To go wandering at night.')
+  ).toBeInTheDocument();
 });
 
-test('should see if an error displays if search with empty field', async () => {
+test('should display searched word after submission via enter', async () => {
+  render(<App />);
+  const user = userEvent.setup();
+
+  const input = screen.getByRole('textbox');
+  await user.type(input, 'cat');
+  await user.type(input, '{enter}');
+
+  const list = await screen.findByTestId('list-word-phonetics');
+  // check if searched word is there
+  expect(within(list).getByText('cat')).toBeInTheDocument();
+  // check if phonetic is there
+  expect(within(list).getByText('/kat/')).toBeInTheDocument();
+  // check if part of speech is there (noun)
+  expect(within(list).getByText('noun')).toBeInTheDocument();
+  // check if defintion is there
+  expect(
+    within(list).getByText('An animal of the family Felidae:')
+  ).toBeInTheDocument();
+  // check if synonym is there
+  expect(within(list).getByText('Synonyms:')).toBeInTheDocument();
+  // check if part of speech is there (verb)
+  expect(within(list).getByText('verb')).toBeInTheDocument();
+  // check if defintion is there
+  expect(
+    within(list).getByText('To go wandering at night.')
+  ).toBeInTheDocument();
+});
+
+test('should see if an error displays if you search with empty field', async () => {
   render(<Searchbar words={[]} />);
   const user = userEvent.setup();
 
@@ -41,12 +84,13 @@ test('should see if an error displays if search with empty field', async () => {
   await user.click(searchBtn);
 
   const errorElement = await screen.findByTestId('error');
+  // using within to check if the text is in the element that looks
   expect(
     within(errorElement).getByText('Please enter a word to search.')
   ).toBeInTheDocument();
 });
 
-test('should see if an error displays if search with word that does not exist', async () => {
+test('should see if an error displays if you search with word that does not exist', async () => {
   render(<Searchbar words={[]} />);
   const user = userEvent.setup();
 
@@ -61,7 +105,7 @@ test('should see if an error displays if search with word that does not exist', 
   ).toBeInTheDocument();
 });
 
-test('should see if there is an audio element', async () => {
+test('should check if there is an audio element', async () => {
   render(<Searchbar words={[]} />);
   const user = userEvent.setup();
 
