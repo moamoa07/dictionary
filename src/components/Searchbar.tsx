@@ -206,7 +206,10 @@ const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
                             .slice(0, 5)
                             .map((antonym, index) => (
                               <li key={index} style={{ listStyle: 'none' }}>
-                                {antonym},
+                                {antonym}
+                                {index + 1 < meaning.synonyms.length &&
+                                  index < 4 &&
+                                  ','}
                               </li>
                             ))}
                         </ul>
