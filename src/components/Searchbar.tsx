@@ -15,7 +15,8 @@ const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
     setIsAudioListVisible((prevVisibility) => !prevVisibility);
   };
 
-  const handleSearch = async () => {
+  const handleSearch = async (e: any) => {
+    e.preventDefault();
     if (!searchTerm) {
       setError('Please enter a word to search.');
       return;
@@ -52,7 +53,7 @@ const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
         marginTop: '1rem',
       }}
     >
-      <div>
+      <form onSubmit={handleSearch}>
         <input
           type="text"
           placeholder="Search for a word"
@@ -68,6 +69,7 @@ const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
         <button
           onClick={handleSearch}
           className="search-button"
+          type="submit"
           style={{
             border: 'none',
             padding: '0.8rem 0.5rem',
@@ -77,7 +79,7 @@ const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
         >
           Search
         </button>
-      </div>
+      </form>
 
       {error && (
         <p data-testid="error" style={{ color: 'red', marginTop: '10px' }}>
@@ -138,7 +140,7 @@ const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
                             style={{
                               display: 'flex',
                               flexDirection: 'column',
-                              marginTop: '0.2rem',
+                              marginBottom: '0.5rem',
                             }}
                           >
                             <p
@@ -163,7 +165,7 @@ const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
                     {meaning.synonyms && meaning.synonyms.length > 0 && (
                       <div
                         style={{
-                          marginTop: '0.5rem',
+                          marginTop: '0.7rem',
                           display: 'flex',
                           gap: '0.3rem',
                         }}
@@ -179,7 +181,10 @@ const Searchbar: React.FC<SearchbarProps> = ({ words: initialWords }) => {
                                   listStyle: 'none',
                                 }}
                               >
-                                {synonym},
+                                {synonym}
+                                {index + 1 < meaning.synonyms.length &&
+                                  index < 4 &&
+                                  ','}
                               </li>
                             ))}
                         </ul>
